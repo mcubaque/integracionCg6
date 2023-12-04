@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-server-integracion-continua
+    restart: always
+    ports:
+      - "5430:5432"
+    environment:
+      POSTGRES_USER: userpoli
+      POSTGRES_PASSWORD: poli1234
+      POSTGRES_DB: dbpoli
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-server-intregacion-continua
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+
+  php:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: php-server-integracion-continua
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./config:/usr/local/etc/php
+    depends_on:
+      - pgadmin
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-server-integracion-continua
+    ports:
+      - "8081:8080"
+      - "50001:50000"
+    volumes:
+      - ./jenkins_home:/var/jenkins_home
+    restart: always
+
+volumes:
+  src: {}
+  config: {}
+  jenkins_data: {}
