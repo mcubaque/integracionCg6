@@ -11,28 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Configurar Python y Node.js
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.x'
-          node-version: '14'
-
-      - name: Descargar Repositorio
-        uses: actions/checkout@v3
-
-      - name: Obtener Archivos Modificados
-        run: |
-          changes=$(git diff --name-only HEAD^..HEAD)
-
-      - name: Generar Mensaje Personalizado
-        run: |
-          message="Se han realizado cambios en el repositorio. Archivos modificados: $changes"
-          # Adaptar el mensaje en función de los cambios específicos si es necesario
-
-      - name: Comentar en el Issue
-        uses: github/issue-comment@v3
-        with:
-          issue_number: ${{ github.event.issue.number }}
-          repository: ${{ github.event.repo.repository }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          body: "$message"
+    - name: Ejecutar Script
+      run: |
+        changes=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+        echo "Se han realizado cambios en los archivos: $changes"
+        message="Se han realizado cambios en el repositorio. Archivos modificados: $changes"
+        gh issue comment ${{ github.event.issue.number }} --body "$message"
