@@ -1,0 +1,27 @@
+name: Notificar Cambio en Archivo
+
+on:
+  push:
+    paths:
+      - '**/*'
+
+jobs:
+  notificar_cambio:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Notificar Cambio
+      uses: actions/github-script@0.11.0
+      with:
+        script: |
+          const changes = github.context.payload.head_commit.modified.join(', ');
+          console.log(`Se han realizado cambios en los archivos: ${changes}`);
+          const message = `Se han realizado cambios en el repositorio. Archivos modificados: ${changes}`;
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
