@@ -8,9 +8,7 @@ on:
       - '**/*'
 
 jobs:
-  notificar_cambio:
-    runs-on: ubuntu-latest
-
+  ci-job:
     steps:
     - name: Notificar Cambio
       uses: actions/github-script@0.11.0
