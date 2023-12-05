@@ -1,6 +1,6 @@
 apiVersion: automation.cloudbees.io/v1alpha1
 kind: workflow
-name: Validar Integración Codeship y GitHub
+name: My automation
 
 on:
   push:
@@ -8,25 +8,18 @@ on:
       - '**'
 
 jobs:
-  validar_integracion:
-
+  ci-job:
     steps:
       - uses: docker://alpine/git:latest
         run: |
           git config --global --add safe.directory /cloudbees/workspace
       - name: checkout
         uses: cloudbees-io/checkout@v1
-      - name: Crear Build en Codeship
-        uses: codeship/codeship-action@v1
-        with:
-          build_name: "Validación de Integración"
-          build_message: "Verifica que la integración de Codeship y GitHub funciona correctamente"
-          build_config_path: ".codeship/config.yml"
-      - name: Verificar Build en Codeship
+      - name: Build Go app
+        uses: docker://golang:1.20
         run: |
-          build_status=$(curl -s -X GET https://api.codeship.com/v1/builds/latest | jq -r .status)
-          if [[ $build_status == "success" ]]; then
-            echo "La integración de Codeship y GitHub funciona correctamente"
-          else
-            echo "La integración de Codeship y GitHub NO funciona correctamente"
-          fi
+          go build -v ./...
+      - name: Run tests
+        uses: docker://golang:1.20
+        run: |
+          go test -v ./...
