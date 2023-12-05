@@ -1,4 +1,4 @@
-apiVersion: "20230627"
+apiVersion: "automation.cloudbees.io/v1alpha1"
 name: Notificar Cambio en Archivo
 
 on:
