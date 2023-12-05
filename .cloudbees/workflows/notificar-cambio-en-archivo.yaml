@@ -7,23 +7,18 @@ on:
 
 jobs:
   notificar_cambio:
-    on:
-      push:
-        paths:
-          - '**/*'
     runs-on: ubuntu-latest
 
     steps:
-    - name: Notificar Cambio
-      uses: actions/github-script@latest
+    - name: Configurar Python y Node.js
+      uses: actions/setup-python@v3
       with:
-        script: |
-          const changes = github.context.payload.head_commit.modified.join(', ');
-          console.log(`Se han realizado cambios en los archivos: ${changes}`);
-          const message = `Se han realizado cambios en el repositorio. Archivos modificados: ${changes}`;
-          github.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: message
-          });
+        python-version: '3.x'
+        node-version: '14'
+
+    - name: Ejecutar Script
+      run: |
+        const changes = github.context.payload.head_commit.modified.join(', ');
+        echo "Se han realizado cambios en los archivos: $changes";
+        message="Se han realizado cambios en el repositorio. Archivos modificados: $changes";
+        gh issue comment ${{ github.event.issue.number }} --body "$message"
