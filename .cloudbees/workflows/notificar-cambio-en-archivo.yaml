@@ -1,19 +1,29 @@
 apiVersion: automation.cloudbees.io/v1alpha1
 kind: workflow
-name: Labeler
+name: Notificar Cambio en Archivo
 
 on:
   push:
     branches:
-      - '**'
+      - '**/*'
 
 jobs:
-  ci-job:
-    permissions:
-      contents: read
-      pull-requests: write
+  notificar_cambio:
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/labeler@v4
+    - name: Notificar Cambio
+      uses: actions/github-script@0.11.0
       with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        script: |
+          const changes = github.context.payload.head_commit.modified.join(', ');
+          console.log(`Se han realizado cambios en los archivos: ${changes}`);
+          const message = `Se han realizado cambios en el repositorio. Archivos modificados: ${changes}`;
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
