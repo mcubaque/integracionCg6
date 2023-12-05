@@ -11,9 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Ejecutar Script
-      run: |
-        changes=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-        echo "Se han realizado cambios en los archivos: $changes"
-        message="Se han realizado cambios en el repositorio. Archivos modificados: $changes"
-        gh issue comment ${{ github.event.issue.number }} --body "$message"
+      - name: Obtener Archivos Modificados
+        run: |
+          changes=$(git diff --name-only HEAD^..HEAD)
+
+      - name: Comentar en el Issue
+        uses: actions/github-issue-comment@v3
+        with:
+          issue_number: ${{ github.event.issue.number }}
+          body: |
+            Se han realizado cambios en los archivos:
+            
+            ${changes}
