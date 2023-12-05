@@ -1,6 +1,6 @@
 apiVersion: automation.cloudbees.io/v1alpha1
 kind: workflow
-name: My automation
+name: Labeler
 
 on:
   push:
@@ -8,18 +8,14 @@ on:
       - '**'
 
 jobs:
-  ci-job:
+  label:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
-      - uses: docker://alpine/git:latest
-        run: |
-          git config --global --add safe.directory /cloudbees/workspace
-      - name: checkout
-        uses: cloudbees-io/checkout@v1
-      - name: Build Go app
-        uses: docker://golang:1.20
-        run: |
-          go build -v ./...
-      - name: Run tests
-        uses: docker://golang:1.20
-        run: |
-          go test -v ./...
+    - uses: actions/labeler@v4
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
