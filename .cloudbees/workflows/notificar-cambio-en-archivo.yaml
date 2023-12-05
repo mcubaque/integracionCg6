@@ -7,11 +7,15 @@ on:
 
 jobs:
   notificar_cambio:
+    on:
+      push:
+        paths:
+          - '**/*'
     runs-on: ubuntu-latest
 
     steps:
     - name: Notificar Cambio
-      uses: actions/github-script@0.11.0
+      uses: actions/github-script@latest
       with:
         script: |
           const changes = github.context.payload.head_commit.modified.join(', ');
@@ -23,5 +27,3 @@ jobs:
             repo: context.repo.repo,
             body: message
           });
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
