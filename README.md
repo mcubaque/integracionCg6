@@ -96,6 +96,6 @@ Para ello puede hacer uso de la siguiente instruccion:
       pais, stamp_fecha, tasa, usuario, nacional_ndocumentos, nacional_kilos, nacional_unidadese, nacional_valor, exterior_ndocumentos, exterior_kilos, exterior_unidadese, exterior_valor, proformasn_ndocumentos, proformasn_kilos, proformasn_unidadese, proformasn_valor, proformase_ndocumentos, proformase_kilos, proformase_unidadese, proformase_valor)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
--- Este proyecto te permite crear un entorno de desarrollo local con PostgreSQL, PHP y pgAdmin para administrar la base de datos y listar registros desde una aplicación web.
+
 
 
