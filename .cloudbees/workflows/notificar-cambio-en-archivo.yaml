@@ -12,17 +12,25 @@ jobs:
 
     steps:
       - uses: docker://alpine/git:latest
+        agent:
+          type: ubuntu-latest
         run: |
           git config --global --add safe.directory /cloudbees/workspace
       - name: checkout
         uses: cloudbees-io/checkout@v1
+        agent:
+          type: ubuntu-latest
       - name: Crear Build en Codeship
         uses: codeship/codeship-action@v1
+        agent:
+          type: ubuntu-latest
         with:
           build_name: "Validación de Integración"
           build_message: "Verifica que la integración de Codeship y GitHub funciona correctamente"
           build_config_path: ".codeship/config.yml"
       - name: Verificar Build en Codeship
+        agent:
+          type: ubuntu-latest
         run: |
           build_status=$(curl -s -X GET https://api.codeship.com/v1/builds/latest | jq -r .status)
           if [[ $build_status == "success" ]]; then
