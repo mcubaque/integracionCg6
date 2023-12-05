@@ -1,4 +1,4 @@
-name: Notificar Cambio en Archivo
+name: Validar Integración Codeship y GitHub
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - '**/*'
 
 jobs:
-  notificar_cambio:
+  validar_integracion:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,11 +14,18 @@ jobs:
         run: |
           changes=$(git diff --name-only HEAD^..HEAD)
 
-      - name: Comentar en el Issue
-        uses: actions/github-issue-comment@v3
+      - name: Crear Build en Codeship
+        uses: codeship/codeship-action@v1
         with:
-          issue_number: ${{ github.event.issue.number }}
-          body: |
-            Se han realizado cambios en los archivos:
-            
-            ${changes}
+          build_name: "Validación de Integración"
+          build_message: "Verifica que la integración de Codeship y GitHub funciona correctamente"
+          build_config_path: ".codeship/config.yml"
+
+      - name: Verificar Build en Codeship
+        run: |
+          build_status=$(curl -s -X GET https://api.codeship.com/v1/builds/latest | jq -r .status)
+          if [[ $build_status == "success" ]]; then
+            echo "La integración de Codeship y GitHub funciona correctamente"
+          else
+            echo "La integración de Codeship y GitHub NO funciona correctamente"
+          fi
