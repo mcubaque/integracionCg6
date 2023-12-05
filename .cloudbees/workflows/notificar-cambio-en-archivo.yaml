@@ -9,7 +9,6 @@ on:
 
 jobs:
   validar_integracion:
-    runs-on: ubuntu-latest
 
     steps:
       - uses: docker://alpine/git:latest
